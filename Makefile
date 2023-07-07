@@ -9,3 +9,6 @@ unit_test:
 
 integration_test:
 	./internal/tests/integration_test.sh
+
+fetch_integration_testdata:
+	./internal/tests/fetch_testdata.sh $(ARGS)

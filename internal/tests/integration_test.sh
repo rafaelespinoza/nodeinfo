@@ -34,7 +34,7 @@ function main () {
 		return 1
 	fi
 
-	if ! "${main_bin}" -client-timeout 10s "batch_discovery" < "${root_dir}/internal/tests/popular_hosts.txt" | tee "${work_dir}/batch_discover.json" ; then
+	if ! "${main_bin}" -client-timeout 10s "batch_discovery" < "${root_dir}/internal/tests/testdata/popular_hosts.txt" | tee "${work_dir}/batch_discover.json" ; then
 		>&2 echo "batch_discovery failed"
 		return 1
 	fi
