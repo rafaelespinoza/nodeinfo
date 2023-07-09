@@ -5,7 +5,7 @@ vet:
 	$(GO) vet $(ARGS) $(SRC_PATHS)
 
 unit_test:
-	$(GO) test $(ARGS) $(SRC_PATHS)
+	$(GO) test -v $(ARGS) $(SRC_PATHS)
 
 integration_test:
 	./internal/tests/integration_test.sh
