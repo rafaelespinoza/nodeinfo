@@ -14,16 +14,14 @@ import (
 )
 
 var theArgs struct {
-	href          string
 	clientTimeout time.Duration
+	batchTimeout  time.Duration
 }
 
 func init() {
-	flag.StringVar(&theArgs.href, "hostname", "example.org", "name of server host")
-	flag.StringVar(&theArgs.href, "H", "example.org", "name of server host (short)")
-	flag.StringVar(&theArgs.href, "url", "https://example.org/nodeinfo/2.1", "for fetching NodeInfo, the full URL to data")
-	flag.StringVar(&theArgs.href, "U", "https://example.org/nodeinfo/2.1", "for fetching NodeInfo, the full URL to data (short)")
-	flag.DurationVar(&theArgs.clientTimeout, "client-timeout", 15*time.Second, "timeout for 1 client request")
+	const defaultClientTimeout = 5 * time.Second
+	flag.DurationVar(&theArgs.clientTimeout, "client-timeout", defaultClientTimeout, "timeout for 1 client request")
+	flag.DurationVar(&theArgs.batchTimeout, "batch-timeout", defaultClientTimeout*20, "timeout for entire batch of client requests")
 
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), `integration test for nodeinfo client
@@ -40,12 +38,11 @@ Usage:
 Examples:
 	Discover nodeinfo:
 
-		-hostname 20 discover_one
-		discover_one
+		-client-timeout 5s -batch-timeout 2m batch_discovery
 
 Default flag values:
 
-`, []string{"discover_one", "get_one", "batch_discovery", "batch_nodeinfo"})
+`, []string{"batch_discovery", "batch_nodeinfo"})
 		flag.PrintDefaults()
 	}
 }
@@ -62,11 +59,14 @@ func main() {
 	out := os.Stdout
 	cli := nodeinfo.NewClient(theArgs.clientTimeout)
 
+	if theArgs.batchTimeout <= theArgs.clientTimeout {
+		log.Fatalf(
+			"-batch-timeout (%s) should be higher than -client-timeout (%s)",
+			theArgs.batchTimeout, theArgs.clientTimeout,
+		)
+	}
+
 	switch action {
-	case "discover_one":
-		doClientDiscoverOne(ctx, out, cli, theArgs.href)
-	case "get_one":
-		doClientGetOne(ctx, out, cli, theArgs.href)
 	case "batch_discovery":
 		doBatchDiscovery(ctx, os.Stdin, out, cli)
 	case "batch_nodeinfo":
@@ -74,25 +74,6 @@ func main() {
 	default:
 		log.Fatalf("unexpected action: %q", action)
 	}
-}
-
-func doClientDiscoverOne(ctx context.Context, w io.Writer, c nodeinfo.Client, hostname string) {
-	data, err := c.DiscoverLinks(ctx, hostname)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("got %d results\n", len(data))
-	writeJSONOrDie(data, w)
-}
-
-func doClientGetOne(ctx context.Context, w io.Writer, c nodeinfo.Client, href string) {
-	data, err := c.GetNodeInfo(ctx, href)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	writeJSONOrDie(data, w)
 }
 
 func writeJSONOrDie(in any, w io.Writer) {

@@ -8,7 +8,7 @@ unit_test:
 	$(GO) test -v $(ARGS) $(SRC_PATHS)
 
 integration_test:
-	./internal/tests/integration_test.sh
+	./internal/tests/integration_test.sh $(ARGS)
 
 fetch_integration_testdata:
 	./internal/tests/fetch_testdata.sh $(ARGS)

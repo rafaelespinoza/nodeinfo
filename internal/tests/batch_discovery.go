@@ -14,7 +14,7 @@ import (
 )
 
 func doBatchDiscovery(ctx context.Context, r io.Reader, w io.Writer, c nodeinfo.Client) {
-	ctx, cancel := context.WithTimeout(ctx, theArgs.clientTimeout*10) // the timeout should be longer than the client's Timeout.
+	ctx, cancel := context.WithTimeout(ctx, theArgs.batchTimeout)
 	defer cancel()
 
 	hostnames, err := readLinesForBatch(ctx, r)
