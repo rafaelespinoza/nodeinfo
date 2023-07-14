@@ -1,5 +1,8 @@
 # nodeinfo
 
+[![docs](https://pkg.go.dev/badge/github.com/rafaelespinoza/nodeinfo.svg)](https://pkg.go.dev/github.com/rafaelespinoza/nodeinfo)
+[![tests](https://github.com/rafaelespinoza/nodeinfo/actions/workflows/tests.yaml/badge.svg)](https://github.com/rafaelespinoza/nodeinfo/actions/workflows/tests.yaml)
+
 This project is an HTTP client for fetching [NodeInfo](https://nodeinfo.diaspora.software) data.
 Source code (golang) is under `nodeinfo/`. Integration tests are at `internal/tests/`.
 
