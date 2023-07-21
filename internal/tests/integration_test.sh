@@ -2,6 +2,8 @@
 
 set -eu -o pipefail
 
+declare GO="${GO:-$(command -v go)}"
+
 declare root_dir
 root_dir=$(git rev-parse --show-toplevel)
 readonly root_dir
@@ -19,7 +21,7 @@ function main () {
 	rm -rf "${work_dir}"
 	mkdir -pv "${work_dir}" "${GOCOVERDIR}"
 
-	go build -o "${main_bin}" -cover "${root_dir}/internal/tests"
+	"${GO}" build -o "${main_bin}" -cover "${root_dir}/internal/tests"
 
 	# There may be several thousand hostnames to choose from. Do we need to check all of them?
 	# Probably not. But let's keep it interesting and pick some random ones.
@@ -43,8 +45,8 @@ function main () {
 
 	>&2 echo "OK, see data in ${work_dir}"
 
-	go tool covdata merge -i "${GOCOVERDIR}" -o "${work_dir}"
-	go tool covdata percent -i "${work_dir}" -pkg github.com/rafaelespinoza/nodeinfo/nodeinfo
+	"${GO}" tool covdata merge -i "${GOCOVERDIR}" -o "${work_dir}"
+	"${GO}" tool covdata percent -i "${work_dir}" -pkg github.com/rafaelespinoza/nodeinfo/nodeinfo
 }
 
 main "${@}"

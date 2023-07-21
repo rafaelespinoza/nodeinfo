@@ -27,6 +27,10 @@ Integration test requirements:
 Run integration tests:
 ```sh
 make integration_test
+
+# By default, it will use the first go binary in your PATH.
+# Specify a path to another golang version like so:
+GO=/path/to/other/golang/version/bin make integration_test
 ```
 
 Some testdata is already committed to source control. Get new testdata and write to a temporary directory:
